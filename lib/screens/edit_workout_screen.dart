@@ -7,6 +7,8 @@ import 'package:flutter_bloc_app_complete/helpers.dart';
 import 'package:flutter_bloc_app_complete/models/exercise.dart';
 import 'package:flutter_bloc_app_complete/states/workout_state.dart';
 
+import '../blocs/workouts_cubit.dart';
+import '../models/workout.dart';
 import 'edit_exercise_screen.dart';
 
 class EditWorkoutScreen extends StatelessWidget {
@@ -20,6 +22,37 @@ class EditWorkoutScreen extends StatelessWidget {
           WorkoutEditing we = state as WorkoutEditing;
           return Scaffold(
             appBar: AppBar(
+              title: InkWell(
+                child: Text(we.workout!.title!),
+                onTap: () => showDialog(
+                    context: context,
+                    builder: (_) {
+                      final controller =
+                          TextEditingController(text: we.workout!.title!);
+                      return AlertDialog(
+                        content: TextField(
+                          controller: controller,
+                          decoration:
+                              InputDecoration(labelText: 'Workout title'),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                if (controller.text.isNotEmpty) {
+                                  Navigator.pop(context);
+                                  Workout renamed = we.workout!
+                                      .copyWith(title: controller.text);
+                                  BlocProvider.of<WorkoutsCubit>(context)
+                                      .saveWorkout(renamed, we.index);
+                                  BlocProvider.of<WorkoutCubit>(context)
+                                      .editWorkout(renamed, we.index);
+                                }
+                              },
+                              child: Text('Rename'))
+                        ],
+                      );
+                    }),
+              ),
               backgroundColor: Colors.purple,
               leading: BackButton(
                 onPressed: () =>

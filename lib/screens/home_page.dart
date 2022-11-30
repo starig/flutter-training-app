@@ -36,13 +36,18 @@ class HomePage extends StatelessWidget {
                           leading: IconButton(
                               onPressed: () {
                                 BlocProvider.of<WorkoutCubit>(context)
-                                    .editWorkout(workout, workouts.indexOf(workout));
+                                    .editWorkout(
+                                        workout, workouts.indexOf(workout));
                               },
                               icon: Icon(Icons.edit)),
                           title: Text(workout.title!),
                           trailing: Text(
                             formatTime(workout.getTotal(), true),
                           ),
+                          onTap: () => !isExpanded
+                              ? BlocProvider.of<WorkoutCubit>(context)
+                                  .startWorkout(workout)
+                              : null,
                         ),
                     body: ListView.builder(
                       shrinkWrap: true,

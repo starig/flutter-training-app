@@ -12,10 +12,10 @@ class Workout extends Equatable {
   });
 
   factory Workout.fromJson(Map<String, dynamic> json) {
-    List<Exercise> exercises=[];
+    List<Exercise> exercises = [];
     int index = 0;
     int startTime = 0;
-    for(var ex in (json['exercises'] as Iterable)) {
+    for (var ex in (json['exercises'] as Iterable)) {
       exercises.add(Exercise.fromJson(ex, index, startTime));
       index++;
       print(index);
@@ -23,13 +23,17 @@ class Workout extends Equatable {
     }
     return Workout(title: json['title'] as String, exercises: exercises);
   }
-  Map<String, dynamic> toJson () => {'title': title, 'exercises': exercises};
 
-  int getTotal() {
-    int time = exercises.fold(0, (prev, exercise) => prev + exercise.duration! + exercise.prelude!);
-    return time;
-  }
+  Map<String, dynamic> toJson() => {'title': title, 'exercises': exercises};
 
+  Workout copyWith({String? title}) =>
+      Workout(title: title ?? this.title, exercises: exercises);
+
+  int getTotal() => exercises.fold(
+      0, (prev, exercise) => prev + exercise.duration! + exercise.prelude!);
+
+  Exercise getCurrentExercise(int? elapsed) =>
+      exercises.lastWhere((element) => element.startTime! <= elapsed!);
 
   @override
   // TODO: implement props
